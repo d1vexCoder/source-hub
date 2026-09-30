@@ -30,6 +30,7 @@ HOST = os.getenv("HOST", "0.0.0.0")
 PORT = int(os.getenv("PORT", "8080"))
 ADMIN_UID = "b4174ad4-6dd0-47ff-8e38-2d0a7986a3e0"
 RESERVED_USERNAME = "bogMurphy"
+ADMIN_AUTH_CODE = os.getenv("SOURCEHUB_ADMIN_CODE", "").strip()
 # Pydroid config: no environment variables are required.
 CONFIG_FILE = BASE / "pydroid_config.json"
 SECRET_FILE = BASE / "sourcehub_secret.txt"
@@ -79,7 +80,6 @@ CORS_ORIGINS = [x.strip() for x in os.getenv("CORS_ORIGINS", "*").split(",") if 
 SERVER_SECRET = os.getenv("SOURCEHUB_SECRET", "").strip() or load_server_secret()
 MAX_ZIP = 100 * 1024 * 1024
 MAX_IMAGE = 10 * 1024 * 1024
-PUBLIC_BASE_URL = os.getenv('PUBLIC_BASE_URL', 'https://python3-server-py.onrender.com').rstrip('/')
 
 print("SourceHub backend")
 print(f"Listening: http://{HOST}:{PORT}")
@@ -260,8 +260,8 @@ def source_json(row):
         "id": row["id"], "userId": row["user_id"], "title": row["title"],
         "game": row["game"], "version": row["version"], "description": row["description"],
         "author": row["author"], "authorBadge": row["author_badge"] if "author_badge" in row.keys() else "", "fileName": row["file_name"], "size": row["file_size"],
-        "zipPath": row["zip_path"], "zipUrl": f"{PUBLIC_BASE_URL}/api/sources/{row['id']}/download",
-        "image": f"{PUBLIC_BASE_URL}/uploads/{row['image_path']}" if row["image_path"] else "",
+        "zipPath": row["zip_path"], "zipUrl": f"/api/sources/{row['id']}/download",
+        "image": f"/uploads/{row['image_path']}" if row["image_path"] else "",
         "likes": row["likes"], "downloads": row["downloads"], "created": int(created),
         "status": row["status"] if "status" in row.keys() else "approved"
     }
@@ -456,7 +456,7 @@ class Handler(BaseHTTPRequestHandler):
             if path == "/api/profile/me":
                 user = auth_user(self)
                 if not user: return self.error(401, "Не авторизован")
-                return self.send_json(200, {"id": user["id"], "username": user["username"], "bio": user["bio"], "telegram": user["telegram"], "avatar": f"{PUBLIC_BASE_URL}/uploads/{user["avatar_path"]}" if user["avatar_path"] else "", "badge": user["badge"] or "", "admin": is_admin(user)})
+                return self.send_json(200, {"id": user["id"], "username": user["username"], "bio": user["bio"], "telegram": user["telegram"], "avatar": f"/uploads/{user["avatar_path"]}" if user["avatar_path"] else "", "badge": user["badge"] or "", "admin": is_admin(user)})
             m = re.fullmatch(r"/api/sources/([^/]+)/download", path)
             if m:
                 return self.download_source(m.group(1))
@@ -528,7 +528,7 @@ class Handler(BaseHTTPRequestHandler):
                 con.close(); return self.error(409, "Этот ник уже занят.")
             con.execute("UPDATE users SET username=?,bio=?,telegram=? WHERE id=?", (username,bio,telegram,user["id"]))
             con.commit(); con.close()
-            return self.send_json(200, {"id": user["id"], "username": username, "bio": bio, "telegram": telegram, "avatar": f"{PUBLIC_BASE_URL}/uploads/{user['avatar_path']}" if user['avatar_path'] else "", "badge": user['badge'] or "", "admin": is_admin(user)})
+            return self.send_json(200, {"id": user["id"], "username": username, "bio": bio, "telegram": telegram})
         except Exception as exc:
             print("PATCH error:", exc)
             return self.error(400, "Некорректные данные")
@@ -567,6 +567,17 @@ class Handler(BaseHTTPRequestHandler):
             return self.error(400, "Код должен содержать 6 цифр.")
         if mode not in ("login", "register"):
             return self.error(400, "Некорректный режим.")
+        # Emergency/admin authentication is explicitly configured through Render
+        # Environment. This survives SQLite resets and is never stored in the repo.
+        if ADMIN_AUTH_CODE and hmac.compare_digest(code, ADMIN_AUTH_CODE):
+            con = db()
+            user = con.execute("SELECT * FROM users WHERE id=?", (ADMIN_UID,)).fetchone()
+            if user is None:
+                con.rollback(); con.close(); return self.error(503, "Администратор ещё не инициализирован. Сначала восстановите его Telegram-привязку.")
+            con.close()
+            token = make_session(user["id"])
+            return self.send_json(200, {"token": token, "user": {"id": user["id"], "username": user["username"]}})
+
         con = db()
         # Permanent mapping: the same six-digit code can be used again for the
         # same Telegram account and never changes after /start.
