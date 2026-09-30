@@ -1,0 +1,9 @@
+__pycache__/
+*.pyc
+sourcehub.sqlite3
+sourcehub.sqlite3-shm
+sourcehub.sqlite3-wal
+sourcehub_secret.txt
+pydroid_config.json
+uploads/
+.env

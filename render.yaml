@@ -1,0 +1,17 @@
+services:
+  - type: web
+    name: sourcehub-backend
+    runtime: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: python3 server.py
+    envVars:
+      - key: TELEGRAM_BOT_TOKEN
+        sync: false
+      - key: TELEGRAM_BOT_USERNAME
+        value: sourcereg_bot
+      - key: SOURCEHUB_SECRET
+        generateValue: true
+      - key: PUBLIC_BASE_URL
+        value: https://python3-server-py.onrender.com
+      - key: CORS_ORIGINS
+        value: https://s0urse.netlify.app
