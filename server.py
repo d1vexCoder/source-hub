@@ -567,16 +567,29 @@ class Handler(BaseHTTPRequestHandler):
             return self.error(400, "Код должен содержать 6 цифр.")
         if mode not in ("login", "register"):
             return self.error(400, "Некорректный режим.")
-        # Emergency/admin authentication is explicitly configured through Render
-        # Environment. This survives SQLite resets and is never stored in the repo.
+        # Dedicated admin login. The admin identity is the fixed UID + reserved
+        # nickname. It must NOT depend on a Telegram row existing in SQLite, so
+        # a Render restart/database reset cannot lock the owner out.
+        # Never allow the admin code to authenticate another nickname.
         if ADMIN_AUTH_CODE and hmac.compare_digest(code, ADMIN_AUTH_CODE):
+            if username.lower() != RESERVED_USERNAME.lower():
+                return self.error(403, "Для этого кода нужен ник администратора @bogMurphy.")
             con = db()
             user = con.execute("SELECT * FROM users WHERE id=?", (ADMIN_UID,)).fetchone()
             if user is None:
-                con.rollback(); con.close(); return self.error(503, "Администратор ещё не инициализирован. Сначала восстановите его Telegram-привязку.")
+                con.execute(
+                    "INSERT INTO users(id,telegram_id,telegram_username,username,created_at) VALUES(?,?,?,?,?)",
+                    (ADMIN_UID, "admin:" + ADMIN_UID, "", RESERVED_USERNAME, iso(now()))
+                )
+                con.commit()
+                user = con.execute("SELECT * FROM users WHERE id=?", (ADMIN_UID,)).fetchone()
+            elif str(user["username"]).lower() != RESERVED_USERNAME.lower():
+                con.execute("UPDATE users SET username=? WHERE id=?", (RESERVED_USERNAME, ADMIN_UID))
+                con.commit()
+                user = con.execute("SELECT * FROM users WHERE id=?", (ADMIN_UID,)).fetchone()
             con.close()
-            token = make_session(user["id"])
-            return self.send_json(200, {"token": token, "user": {"id": user["id"], "username": user["username"]}})
+            token = make_session(ADMIN_UID)
+            return self.send_json(200, {"token": token, "user": {"id": ADMIN_UID, "username": RESERVED_USERNAME}})
 
         con = db()
         # Permanent mapping: the same six-digit code can be used again for the
