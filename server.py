@@ -12,6 +12,13 @@ import shutil
 import hashlib
 import secrets
 import sqlite3
+
+try:
+    import psycopg
+    from psycopg.rows import dict_row
+except ImportError:
+    psycopg = None
+    dict_row = None
 import threading
 import mimetypes
 from pathlib import Path
@@ -30,7 +37,7 @@ HOST = os.getenv("HOST", "0.0.0.0")
 PORT = int(os.getenv("PORT", "8080"))
 ADMIN_UID = "b4174ad4-6dd0-47ff-8e38-2d0a7986a3e0"
 RESERVED_USERNAME = "bogMurphy"
-ADMIN_AUTH_CODE = os.getenv("SOURCEHUB_ADMIN_CODE", "").strip()
+ADMIN_CODE = os.getenv("SOURCEHUB_ADMIN_CODE", "").strip()
 # Pydroid config: no environment variables are required.
 CONFIG_FILE = BASE / "pydroid_config.json"
 SECRET_FILE = BASE / "sourcehub_secret.txt"
@@ -80,6 +87,8 @@ CORS_ORIGINS = [x.strip() for x in os.getenv("CORS_ORIGINS", "*").split(",") if 
 SERVER_SECRET = os.getenv("SOURCEHUB_SECRET", "").strip() or load_server_secret()
 MAX_ZIP = 100 * 1024 * 1024
 MAX_IMAGE = 10 * 1024 * 1024
+DATABASE_URL = os.getenv("DATABASE_URL", "").strip()
+PUBLIC_BASE_URL = os.getenv('PUBLIC_BASE_URL', 'https://python3-server-py.onrender.com').rstrip('/')
 
 print("SourceHub backend")
 print(f"Listening: http://{HOST}:{PORT}")
@@ -109,13 +118,30 @@ def iso(dt):
     return dt.isoformat()
 
 
+class PGConnection:
+    def __init__(self, url):
+        if psycopg is None:
+            raise RuntimeError("DATABASE_URL задан, но пакет psycopg не установлен")
+        self.con = psycopg.connect(url, row_factory=dict_row)
+    def execute(self, sql, params=()):
+        sql = sql.replace("?", "%s")
+        return self.con.execute(sql, params)
+    def commit(self): self.con.commit()
+    def rollback(self): self.con.rollback()
+    def close(self): self.con.close()
+
 def db():
+    if DATABASE_URL:
+        return PGConnection(DATABASE_URL)
     con = sqlite3.connect(DB_PATH, timeout=30)
     con.row_factory = sqlite3.Row
     return con
 
 
 def init_db():
+    if DATABASE_URL:
+        init_postgres()
+        return
     con = db()
     con.executescript("""
     PRAGMA journal_mode=WAL;
@@ -127,6 +153,7 @@ def init_db():
       bio TEXT NOT NULL DEFAULT 'Автор SourceHub',
       telegram TEXT NOT NULL DEFAULT '',
       avatar_path TEXT,
+      avatar_data BLOB,
       badge TEXT NOT NULL DEFAULT '',
       created_at TEXT NOT NULL
     );
@@ -178,9 +205,12 @@ def init_db():
     # Migrate older databases created before avatars/badges/moderation.
     for stmt in (
         "ALTER TABLE users ADD COLUMN avatar_path TEXT",
+        "ALTER TABLE users ADD COLUMN avatar_data BLOB",
         "ALTER TABLE users ADD COLUMN badge TEXT NOT NULL DEFAULT ''",
         "ALTER TABLE sources ADD COLUMN status TEXT NOT NULL DEFAULT 'approved'",
-        "ALTER TABLE sources ADD COLUMN moderation_note TEXT NOT NULL DEFAULT ''"
+        "ALTER TABLE sources ADD COLUMN moderation_note TEXT NOT NULL DEFAULT ''",
+        "ALTER TABLE sources ADD COLUMN zip_data BLOB",
+        "ALTER TABLE sources ADD COLUMN image_data BLOB"
     ):
         try:
             con.execute(stmt)
@@ -196,6 +226,42 @@ def init_db():
                     (stable_hash, str(row["telegram_id"])))
     con.commit()
     con.close()
+
+
+def init_postgres():
+    con = db()
+    con.execute("""CREATE TABLE IF NOT EXISTS users (
+      id TEXT PRIMARY KEY, telegram_id TEXT UNIQUE NOT NULL, telegram_username TEXT DEFAULT '',
+      username TEXT UNIQUE NOT NULL, bio TEXT NOT NULL DEFAULT 'Автор SourceHub', telegram TEXT NOT NULL DEFAULT '',
+      avatar_path TEXT, avatar_data BYTEA, badge TEXT NOT NULL DEFAULT '', created_at TEXT NOT NULL)""")
+    con.execute("""CREATE TABLE IF NOT EXISTS auth_codes (
+      id BIGSERIAL PRIMARY KEY, telegram_id TEXT NOT NULL, code_hash TEXT NOT NULL, expires_at TEXT NOT NULL,
+      used INTEGER NOT NULL DEFAULT 0, created_at TEXT NOT NULL)""")
+    con.execute("CREATE INDEX IF NOT EXISTS idx_auth_codes_hash ON auth_codes(code_hash, used, expires_at)")
+    con.execute("""CREATE TABLE IF NOT EXISTS telegram_auth (
+      telegram_id TEXT PRIMARY KEY, code TEXT NOT NULL UNIQUE, code_hash TEXT NOT NULL UNIQUE,
+      telegram_username TEXT NOT NULL DEFAULT '', created_at TEXT NOT NULL)""")
+    con.execute("""CREATE TABLE IF NOT EXISTS sessions (
+      token_hash TEXT PRIMARY KEY, user_id TEXT NOT NULL, expires_at TEXT NOT NULL, created_at TEXT NOT NULL)""")
+    con.execute("""CREATE TABLE IF NOT EXISTS sources (
+      id TEXT PRIMARY KEY, user_id TEXT NOT NULL, title TEXT NOT NULL, game TEXT NOT NULL, version TEXT NOT NULL,
+      description TEXT NOT NULL DEFAULT '', author TEXT NOT NULL, file_name TEXT NOT NULL, file_size BIGINT NOT NULL,
+      zip_path TEXT NOT NULL, image_path TEXT, likes INTEGER NOT NULL DEFAULT 0, downloads INTEGER NOT NULL DEFAULT 0,
+      status TEXT NOT NULL DEFAULT 'approved', moderation_note TEXT NOT NULL DEFAULT '', zip_data BYTEA, image_data BYTEA, created_at TEXT NOT NULL)""")
+    con.execute("CREATE TABLE IF NOT EXISTS likes (user_id TEXT NOT NULL, source_id TEXT NOT NULL, PRIMARY KEY(user_id, source_id))")
+    for stmt in (
+      "ALTER TABLE users ADD COLUMN IF NOT EXISTS avatar_path TEXT",
+      "ALTER TABLE users ADD COLUMN IF NOT EXISTS avatar_data BYTEA",
+      "ALTER TABLE users ADD COLUMN IF NOT EXISTS badge TEXT NOT NULL DEFAULT ''",
+      "ALTER TABLE sources ADD COLUMN IF NOT EXISTS status TEXT NOT NULL DEFAULT 'approved'",
+      "ALTER TABLE sources ADD COLUMN IF NOT EXISTS moderation_note TEXT NOT NULL DEFAULT ''",
+      "ALTER TABLE sources ADD COLUMN IF NOT EXISTS zip_data BYTEA",
+      "ALTER TABLE sources ADD COLUMN IF NOT EXISTS image_data BYTEA"):
+        con.execute(stmt)
+    rows=con.execute("SELECT telegram_id,code FROM telegram_auth").fetchall()
+    for row in rows:
+        con.execute("UPDATE telegram_auth SET code_hash=? WHERE telegram_id=?", (code_hash(str(row['code'])), str(row['telegram_id'])))
+    con.commit(); con.close()
 
 
 def sha256(value):
@@ -260,8 +326,8 @@ def source_json(row):
         "id": row["id"], "userId": row["user_id"], "title": row["title"],
         "game": row["game"], "version": row["version"], "description": row["description"],
         "author": row["author"], "authorBadge": row["author_badge"] if "author_badge" in row.keys() else "", "fileName": row["file_name"], "size": row["file_size"],
-        "zipPath": row["zip_path"], "zipUrl": f"/api/sources/{row['id']}/download",
-        "image": f"/uploads/{row['image_path']}" if row["image_path"] else "",
+        "zipPath": row["zip_path"], "zipUrl": f"{PUBLIC_BASE_URL}/api/sources/{row['id']}/download",
+        "image": f"{PUBLIC_BASE_URL}/api/sources/{row['id']}/image" if row["image_data"] else (f"{PUBLIC_BASE_URL}/uploads/{row['image_path']}" if row["image_path"] else ""),
         "likes": row["likes"], "downloads": row["downloads"], "created": int(created),
         "status": row["status"] if "status" in row.keys() else "approved"
     }
@@ -456,12 +522,30 @@ class Handler(BaseHTTPRequestHandler):
             if path == "/api/profile/me":
                 user = auth_user(self)
                 if not user: return self.error(401, "Не авторизован")
-                return self.send_json(200, {"id": user["id"], "username": user["username"], "bio": user["bio"], "telegram": user["telegram"], "avatar": f"/uploads/{user["avatar_path"]}" if user["avatar_path"] else "", "badge": user["badge"] or "", "admin": is_admin(user)})
+                return self.send_json(200, {"id": user["id"], "username": user["username"], "bio": user["bio"], "telegram": user["telegram"], "avatar": (f"{PUBLIC_BASE_URL}/api/profile/avatar/{user['id']}" if user["avatar_data"] else (f"{PUBLIC_BASE_URL}/uploads/{user['avatar_path']}" if user["avatar_path"] else "")), "badge": user["badge"] or "", "admin": is_admin(user)})
             m = re.fullmatch(r"/api/sources/([^/]+)/download", path)
             if m:
                 return self.download_source(m.group(1))
             if path == "/":
                 return self.serve_file(BASE / "index.html", "text/html; charset=utf-8")
+            m = re.fullmatch(r"/api/sources/([^/]+)/image", path)
+            if m:
+                con=db(); row=con.execute("SELECT image_data,image_path FROM sources WHERE id=?",(m.group(1),)).fetchone(); con.close()
+                if not row: return self.error(404,"Изображение не найдено")
+                if row["image_data"]: return self.serve_bytes(row["image_data"], "image/jpeg")
+                if row["image_path"]:
+                    target=(UPLOADS/row["image_path"]).resolve()
+                    if target.is_file(): return self.serve_file(target,"image/jpeg")
+                return self.error(404,"Изображение не найдено")
+            m = re.fullmatch(r"/api/profile/avatar/([^/]+)", path)
+            if m:
+                con=db(); row=con.execute("SELECT avatar_data,avatar_path FROM users WHERE id=?",(m.group(1),)).fetchone(); con.close()
+                if not row: return self.error(404,"Аватар не найден")
+                if row["avatar_data"]: return self.serve_bytes(row["avatar_data"], "image/jpeg")
+                if row["avatar_path"]:
+                    target=(UPLOADS/row["avatar_path"]).resolve()
+                    if target.is_file(): return self.serve_file(target,"image/jpeg")
+                return self.error(404,"Аватар не найден")
             if path.startswith("/uploads/"):
                 rel = path[len("/uploads/"):]
                 target = (UPLOADS / rel).resolve()
@@ -528,7 +612,7 @@ class Handler(BaseHTTPRequestHandler):
                 con.close(); return self.error(409, "Этот ник уже занят.")
             con.execute("UPDATE users SET username=?,bio=?,telegram=? WHERE id=?", (username,bio,telegram,user["id"]))
             con.commit(); con.close()
-            return self.send_json(200, {"id": user["id"], "username": username, "bio": bio, "telegram": telegram})
+            return self.send_json(200, {"id": user["id"], "username": username, "bio": bio, "telegram": telegram, "avatar": (f"{PUBLIC_BASE_URL}/api/profile/avatar/{user['id']}" if user["avatar_data"] else (f"{PUBLIC_BASE_URL}/uploads/{user['avatar_path']}" if user['avatar_path'] else "")), "badge": user['badge'] or "", "admin": is_admin(user)})
         except Exception as exc:
             print("PATCH error:", exc)
             return self.error(400, "Некорректные данные")
@@ -567,18 +651,20 @@ class Handler(BaseHTTPRequestHandler):
             return self.error(400, "Код должен содержать 6 цифр.")
         if mode not in ("login", "register"):
             return self.error(400, "Некорректный режим.")
-        # Emergency/admin authentication is explicitly configured through Render
-        # Environment. This survives SQLite resets and is never stored in the repo.
-        if ADMIN_AUTH_CODE and hmac.compare_digest(code, ADMIN_AUTH_CODE):
-            con = db()
-            user = con.execute("SELECT * FROM users WHERE id=?", (ADMIN_UID,)).fetchone()
-            if user is None:
-                con.rollback(); con.close(); return self.error(503, "Администратор ещё не инициализирован. Сначала восстановите его Telegram-привязку.")
-            con.close()
-            token = make_session(user["id"])
-            return self.send_json(200, {"token": token, "user": {"id": user["id"], "username": user["username"]}})
-
         con = db()
+        # Dedicated admin code from Render Environment. This works even if the
+        # SQLite/Neon user row was lost during a deployment.
+        if ADMIN_CODE and code == ADMIN_CODE and (username.lower() == RESERVED_USERNAME.lower() or mode == "login"):
+            user = con.execute("SELECT * FROM users WHERE id=?", (ADMIN_UID,)).fetchone()
+            if not user:
+                tg_id = "admin:" + ADMIN_UID
+                if con.execute("SELECT 1 FROM users WHERE telegram_id=?", (tg_id,)).fetchone():
+                    tg_id = "admin:" + ADMIN_UID + ":sourcehub"
+                con.execute("INSERT INTO users(id,telegram_id,telegram_username,username,created_at) VALUES(?,?,?,?,?)", (ADMIN_UID,tg_id,"",RESERVED_USERNAME,iso(now())))
+                user = con.execute("SELECT * FROM users WHERE id=?", (ADMIN_UID,)).fetchone()
+            con.commit(); con.close()
+            token = make_session(ADMIN_UID)
+            return self.send_json(200, {"token": token, "user": {"id": ADMIN_UID, "username": RESERVED_USERNAME}})
         # Permanent mapping: the same six-digit code can be used again for the
         # same Telegram account and never changes after /start.
         # Primary lookup uses the stable hash. Fallback to the stored permanent
@@ -599,6 +685,18 @@ class Handler(BaseHTTPRequestHandler):
             con.close(); return self.error(401, "Неверный 6-значный код.")
         tg_id = row["telegram_id"]
         user = con.execute("SELECT * FROM users WHERE telegram_id=?", (tg_id,)).fetchone()
+        # The reserved admin nickname may be claimed only with a real Telegram
+        # code. Bind that Telegram account to the fixed administrator UID.
+        if username.lower() == RESERVED_USERNAME.lower() and mode == "register":
+            if user and str(user["id"]) != ADMIN_UID:
+                con.execute("UPDATE sessions SET user_id=? WHERE user_id=?", (ADMIN_UID, user["id"]))
+                con.execute("UPDATE users SET id=?, username=? WHERE telegram_id=?", (ADMIN_UID, RESERVED_USERNAME, tg_id))
+            elif not user:
+                con.execute("INSERT INTO users(id,telegram_id,telegram_username,username,created_at) VALUES(?,?,?,?,?)", (ADMIN_UID,tg_id,row.get("telegram_username","") if hasattr(row,"get") else "",RESERVED_USERNAME,iso(now())))
+            user = con.execute("SELECT * FROM users WHERE id=?", (ADMIN_UID,)).fetchone()
+            con.commit(); con.close()
+            token=make_session(ADMIN_UID)
+            return self.send_json(200,{"token":token,"user":{"id":ADMIN_UID,"username":RESERVED_USERNAME}})
         if user is None:
             if mode != "register":
                 con.rollback(); con.close(); return self.error(404, "Аккаунт не найден. Выбери регистрацию.")
@@ -673,8 +771,8 @@ class Handler(BaseHTTPRequestHandler):
         ext=Path(f["filename"] or "avatar.jpg").suffix.lower()
         if ext not in (".jpg",".jpeg",".png",".webp",".gif"): ext=".jpg"
         rel=f"avatars/{user['id']}{ext}"; path=UPLOADS/rel; path.parent.mkdir(parents=True,exist_ok=True); path.write_bytes(f["content"])
-        con=db(); con.execute("UPDATE users SET avatar_path=? WHERE id=?",(rel,user["id"])); con.commit(); con.close()
-        return self.send_json(200,{"avatar":f"/uploads/{rel}"})
+        con=db(); con.execute("UPDATE users SET avatar_path=?, avatar_data=? WHERE id=?",(rel,f["content"],user["id"])); con.commit(); con.close()
+        return self.send_json(200,{"avatar":f"{PUBLIC_BASE_URL}/api/profile/avatar/{user['id']}"})
 
     def create_source(self):
         user = auth_user(self)
@@ -710,8 +808,8 @@ class Handler(BaseHTTPRequestHandler):
             return self.error(400, "Название и игра обязательны")
         con = db()
         status = "approved" if is_admin(user) else "pending"
-        con.execute("INSERT INTO sources(id,user_id,title,game,version,description,author,file_name,file_size,zip_path,image_path,status,moderation_note,created_at) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
-                    (sid,user["id"],title,game,version,description,user["username"],z["filename"],len(z["content"]),zip_rel,image_rel,status,"",iso(now())))
+        con.execute("INSERT INTO sources(id,user_id,title,game,version,description,author,file_name,file_size,zip_path,image_path,status,moderation_note,zip_data,image_data,created_at) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
+                    (sid,user["id"],title,game,version,description,user["username"],z["filename"],len(z["content"]),zip_rel,image_rel,status,"",z["content"],(image["content"] if image and image["content"] else None),iso(now())))
         con.commit()
         row = con.execute("SELECT * FROM sources WHERE id=?", (sid,)).fetchone()
         con.close()
@@ -740,10 +838,23 @@ class Handler(BaseHTTPRequestHandler):
         if not row:
             con.close(); return self.error(404, "Сорс не найден")
         con.execute("UPDATE sources SET downloads=downloads+1 WHERE id=?", (sid,)); con.commit(); con.close()
+        data = row["zip_data"] if "zip_data" in row.keys() else None
+        if data:
+            return self.serve_bytes(data, "application/zip", download_name=row["file_name"])
         path = (UPLOADS / row["zip_path"]).resolve()
         if not str(path).startswith(str(UPLOADS.resolve()) + os.sep) or not path.is_file():
             return self.error(404, "ZIP-файл отсутствует")
         return self.serve_file(path, "application/zip", download_name=row["file_name"])
+
+    def serve_bytes(self, data, content_type, download_name=None):
+        self.send_response(200)
+        self.send_header("Content-Type", content_type)
+        self.send_header("Content-Length", str(len(data)))
+        self.send_header("Access-Control-Allow-Origin", self.cors_origin())
+        if download_name:
+            safe=clean_name(download_name,"download.zip")
+            self.send_header("Content-Disposition", f'attachment; filename="{safe}"')
+        self.end_headers(); self.wfile.write(bytes(data))
 
     def serve_file(self, path, content_type, download_name=None):
         size = path.stat().st_size

@@ -11,6 +11,10 @@ services:
         value: sourcereg_bot
       - key: SOURCEHUB_SECRET
         generateValue: true
+      - key: SOURCEHUB_ADMIN_CODE
+        sync: false
+      - key: DATABASE_URL
+        sync: false
       - key: PUBLIC_BASE_URL
         value: https://python3-server-py.onrender.com
       - key: CORS_ORIGINS
