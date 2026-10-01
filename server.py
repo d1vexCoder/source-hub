@@ -654,14 +654,15 @@ class Handler(BaseHTTPRequestHandler):
         con = db()
         # Dedicated admin code from Render Environment. This works even if the
         # SQLite/Neon user row was lost during a deployment.
-        if ADMIN_CODE and code == ADMIN_CODE and (username.lower() == RESERVED_USERNAME.lower() or mode == "login"):
+        # The reserved nickname is required so an admin code cannot be used as
+        # a normal user's login code.
+        if ADMIN_CODE and code == ADMIN_CODE and username.lower() == RESERVED_USERNAME.lower():
             user = con.execute("SELECT * FROM users WHERE id=?", (ADMIN_UID,)).fetchone()
             if not user:
                 tg_id = "admin:" + ADMIN_UID
                 if con.execute("SELECT 1 FROM users WHERE telegram_id=?", (tg_id,)).fetchone():
                     tg_id = "admin:" + ADMIN_UID + ":sourcehub"
                 con.execute("INSERT INTO users(id,telegram_id,telegram_username,username,created_at) VALUES(?,?,?,?,?)", (ADMIN_UID,tg_id,"",RESERVED_USERNAME,iso(now())))
-                user = con.execute("SELECT * FROM users WHERE id=?", (ADMIN_UID,)).fetchone()
             con.commit(); con.close()
             token = make_session(ADMIN_UID)
             return self.send_json(200, {"token": token, "user": {"id": ADMIN_UID, "username": RESERVED_USERNAME}})
@@ -685,14 +686,29 @@ class Handler(BaseHTTPRequestHandler):
             con.close(); return self.error(401, "Неверный 6-значный код.")
         tg_id = row["telegram_id"]
         user = con.execute("SELECT * FROM users WHERE telegram_id=?", (tg_id,)).fetchone()
-        # The reserved admin nickname may be claimed only with a real Telegram
-        # code. Bind that Telegram account to the fixed administrator UID.
-        if username.lower() == RESERVED_USERNAME.lower() and mode == "register":
+        # The reserved admin nickname can use the real Telegram code in BOTH
+        # login and registration mode. This fixes the case where the UI is on
+        # "Войти по коду" but the administrator has only the Telegram code.
+        if username.lower() == RESERVED_USERNAME.lower():
             if user and str(user["id"]) != ADMIN_UID:
-                con.execute("UPDATE sessions SET user_id=? WHERE user_id=?", (ADMIN_UID, user["id"]))
-                con.execute("UPDATE users SET id=?, username=? WHERE telegram_id=?", (ADMIN_UID, RESERVED_USERNAME, tg_id))
-            elif not user:
-                con.execute("INSERT INTO users(id,telegram_id,telegram_username,username,created_at) VALUES(?,?,?,?,?)", (ADMIN_UID,tg_id,row.get("telegram_username","") if hasattr(row,"get") else "",RESERVED_USERNAME,iso(now())))
+                # Never silently turn an unrelated existing account into the
+                # administrator. The Telegram code must belong to an account
+                # that is not already claimed by another SourceHub user.
+                con.rollback(); con.close()
+                return self.error(409, "Этот Telegram уже привязан к другому аккаунту.")
+            if not user:
+                admin_user = con.execute("SELECT * FROM users WHERE id=?", (ADMIN_UID,)).fetchone()
+                if admin_user:
+                    # Keep the existing admin row and attach this Telegram ID.
+                    old_tg = str(admin_user["telegram_id"] or "")
+                    if old_tg != tg_id and con.execute("SELECT 1 FROM users WHERE telegram_id=?", (tg_id,)).fetchone():
+                        con.rollback(); con.close()
+                        return self.error(409, "Этот Telegram уже привязан к другому аккаунту.")
+                    con.execute("UPDATE users SET telegram_id=?, telegram_username=? WHERE id=?",
+                                 (tg_id, row.get("telegram_username", "") if hasattr(row, "get") else "", ADMIN_UID))
+                else:
+                    con.execute("INSERT INTO users(id,telegram_id,telegram_username,username,created_at) VALUES(?,?,?,?,?)",
+                                 (ADMIN_UID,tg_id,row.get("telegram_username","") if hasattr(row,"get") else "",RESERVED_USERNAME,iso(now())))
             user = con.execute("SELECT * FROM users WHERE id=?", (ADMIN_UID,)).fetchone()
             con.commit(); con.close()
             token=make_session(ADMIN_UID)
