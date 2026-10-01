@@ -1,1 +1,2 @@
-psycopg[binary]>=3.2,<4
+# No pip packages required.
+# Optional public mode downloads official cloudflared automatically.

@@ -1,4 +1,4 @@
-# Optional local configuration for Pydroid/Termux.
-# On Render, set TELEGRAM_BOT_TOKEN and TELEGRAM_BOT_USERNAME in Environment Variables.
+# Optional. Leave this file untouched.
+# server.py asks for the token on first launch and saves it locally.
 BOT_TOKEN = ""
-BOT_USERNAME = "sourcereg_bot"
+BOT_USERNAME = ""
