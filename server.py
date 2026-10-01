@@ -92,6 +92,8 @@ PUBLIC_BASE_URL = os.getenv('PUBLIC_BASE_URL', 'https://python3-server-py.onrend
 
 print("SourceHub backend")
 print(f"Listening: http://{HOST}:{PORT}")
+if ADMIN_CODE and not re.fullmatch(r"\d{6}", ADMIN_CODE):
+    print("WARNING: SOURCEHUB_ADMIN_CODE must contain exactly 6 digits; admin-code login is disabled until corrected.")
 
 def setup_bot_if_needed():
     global BOT_TOKEN, BOT_USERNAME
@@ -514,6 +516,8 @@ class Handler(BaseHTTPRequestHandler):
                 return self.send_json(200, {"ok": True, "telegram_bot": bool(BOT_TOKEN), "service": "SourceHub", "backend": "stdlib"})
             if path == "/api/config":
                 return self.send_json(200, {"botUsername": BOT_USERNAME, "registration": bool(BOT_TOKEN), "backend": "pydroid-stdlib"})
+            if path == "/api/admin/moderation":
+                return self.admin_moderation()
             if path == "/api/sources":
                 con = db()
                 rows = con.execute("SELECT s.*, COALESCE(u.badge,'') AS author_badge FROM sources s LEFT JOIN users u ON u.id=s.user_id WHERE COALESCE(s.status,'approved')='approved' ORDER BY s.created_at DESC LIMIT 500").fetchall()
