@@ -229,7 +229,7 @@ html,body{background:#f7f8fa;color:#111318}body{color:#111318}.header{background
 const TELEGRAM_AUTH_CONFIG={botUsername:'sourcereg_bot',apiBase:''};
 // Same-origin API: works on localhost and through the public HTTPS tunnel.
 // This avoids mixed-content/CORS failures caused by calling http://127.0.0.1 from Netlify/HTTPS.
-const API='https://python3-server-py.onrender.com';
+const API='https://source-hub.onrender.com';
 let sources=[];
 let profile={name:'Гость',bio:'Войди или зарегистрируйся',telegram:'',id:null,avatar:'',badge:''};
 let savedIds=JSON.parse(localStorage.getItem('sourcehub_saved_v4')||'[]');
