@@ -306,6 +306,9 @@ def auth_user(handler):
 def is_admin(user):
     return bool(user and str(user["id"]) == ADMIN_UID)
 
+def is_moderator(user):
+    return bool(user and (is_admin(user) or str(user["badge"] or "").strip().lower() in ("gold", "white")))
+
 def normalize_username(name):
     return str(name or "").strip().lstrip("@").strip()
 
@@ -526,7 +529,10 @@ class Handler(BaseHTTPRequestHandler):
             if path == "/api/profile/me":
                 user = auth_user(self)
                 if not user: return self.error(401, "Не авторизован")
-                return self.send_json(200, {"id": user["id"], "username": user["username"], "bio": user["bio"], "telegram": user["telegram"], "avatar": (f"{PUBLIC_BASE_URL}/api/profile/avatar/{user['id']}" if user["avatar_data"] else (f"{PUBLIC_BASE_URL}/uploads/{user['avatar_path']}" if user["avatar_path"] else "")), "badge": user["badge"] or "", "admin": is_admin(user)})
+                return self.send_json(200, {"id": user["id"], "username": user["username"], "bio": user["bio"], "telegram": user["telegram"], "avatar": (f"{PUBLIC_BASE_URL}/api/profile/avatar/{user['id']}" if user["avatar_data"] else (f"{PUBLIC_BASE_URL}/uploads/{user['avatar_path']}" if user["avatar_path"] else "")), "badge": user["badge"] or "", "admin": is_admin(user), "moderator": is_moderator(user)})
+            m = re.fullmatch(r"/api/admin/sources/([^/]+)/download", path)
+            if m:
+                return self.moderator_download_source(m.group(1))
             m = re.fullmatch(r"/api/sources/([^/]+)/download", path)
             if m:
                 return self.download_source(m.group(1))
@@ -616,7 +622,7 @@ class Handler(BaseHTTPRequestHandler):
                 con.close(); return self.error(409, "Этот ник уже занят.")
             con.execute("UPDATE users SET username=?,bio=?,telegram=? WHERE id=?", (username,bio,telegram,user["id"]))
             con.commit(); con.close()
-            return self.send_json(200, {"id": user["id"], "username": username, "bio": bio, "telegram": telegram, "avatar": (f"{PUBLIC_BASE_URL}/api/profile/avatar/{user['id']}" if user["avatar_data"] else (f"{PUBLIC_BASE_URL}/uploads/{user['avatar_path']}" if user['avatar_path'] else "")), "badge": user['badge'] or "", "admin": is_admin(user)})
+            return self.send_json(200, {"id": user["id"], "username": username, "bio": bio, "telegram": telegram, "avatar": (f"{PUBLIC_BASE_URL}/api/profile/avatar/{user['id']}" if user["avatar_data"] else (f"{PUBLIC_BASE_URL}/uploads/{user['avatar_path']}" if user['avatar_path'] else "")), "badge": user['badge'] or "", "admin": is_admin(user), "moderator": is_moderator(user)})
         except Exception as exc:
             print("PATCH error:", exc)
             return self.error(400, "Некорректные данные")
@@ -740,15 +746,18 @@ class Handler(BaseHTTPRequestHandler):
 
     def admin_moderation(self):
         user = auth_user(self)
-        if not is_admin(user): return self.error(403, "Только администратор")
+        if not is_moderator(user): return self.error(403, "Модерация доступна пользователям с галочкой")
         con = db()
-        rows = con.execute("SELECT s.*, u.username AS author_username, COALESCE(u.badge,'') AS author_badge FROM sources s LEFT JOIN users u ON u.id=s.user_id WHERE s.status='pending' ORDER BY s.created_at ASC").fetchall()
+        if is_admin(user):
+            rows = con.execute("SELECT s.*, u.username AS author_username, COALESCE(u.badge,'') AS author_badge FROM sources s LEFT JOIN users u ON u.id=s.user_id WHERE s.status='pending' ORDER BY s.created_at ASC").fetchall()
+        else:
+            rows = con.execute("SELECT s.*, u.username AS author_username, COALESCE(u.badge,'') AS author_badge FROM sources s LEFT JOIN users u ON u.id=s.user_id WHERE s.status='pending' AND s.user_id<>? ORDER BY s.created_at ASC", (user["id"],)).fetchall()
         con.close()
         return self.send_json(200, [source_json(r) | {"author": r["author_username"], "authorBadge": r["author_badge"], "status": r["status"], "moderationNote": r["moderation_note"]} for r in rows])
 
     def admin_moderate_source(self, sid):
         user = auth_user(self)
-        if not is_admin(user): return self.error(403, "Только администратор")
+        if not is_moderator(user): return self.error(403, "Модерация доступна пользователям с галочкой")
         try:
             body=json.loads(self.read_body(16*1024).decode("utf-8"))
         except Exception:
@@ -757,11 +766,28 @@ class Handler(BaseHTTPRequestHandler):
         note=str(body.get("note","")).strip()[:500]
         if status not in ("approved","rejected"):
             return self.error(400,"Статус: approved или rejected")
-        con=db(); row=con.execute("SELECT id FROM sources WHERE id=?",(sid,)).fetchone()
+        con=db(); row=con.execute("SELECT id,user_id,status FROM sources WHERE id=?",(sid,)).fetchone()
         if not row:
             con.close(); return self.error(404,"Сорс не найден")
+        if not is_admin(user) and str(row["user_id"]) == str(user["id"]):
+            con.close(); return self.error(403,"Нельзя модерировать собственный сорс")
+        if str(row["status"]) != "pending":
+            con.close(); return self.error(409,"Сорс уже обработан")
         con.execute("UPDATE sources SET status=?, moderation_note=? WHERE id=?",(status,note,sid)); con.commit(); con.close()
         return self.send_json(200,{"ok":True,"status":status})
+
+    def moderator_download_source(self, sid):
+        user = auth_user(self)
+        if not is_moderator(user): return self.error(403, "Только модератор")
+        con = db(); row = con.execute("SELECT * FROM sources WHERE id=?", (sid,)).fetchone()
+        con.close()
+        if not row: return self.error(404, "Сорс не найден")
+        data = row["zip_data"] if "zip_data" in row.keys() else None
+        if data: return self.serve_bytes(data, "application/zip", download_name=row["file_name"])
+        path = (UPLOADS / row["zip_path"]).resolve()
+        if not str(path).startswith(str(UPLOADS.resolve()) + os.sep) or not path.is_file():
+            return self.error(404, "ZIP-файл отсутствует")
+        return self.serve_file(path, "application/zip", download_name=row["file_name"])
 
     def admin_set_badge(self, uid):
         user=auth_user(self)
