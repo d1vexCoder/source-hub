@@ -23,7 +23,6 @@ body.light{--bg:#f6f7f9;--panel:#fff;--panel2:#eef0f4;--line:#dfe3ea;--muted:#68
 .source-badge{display:inline-flex;align-items:center;gap:5px;font-size:11px;color:#aab0bc}.dot{width:6px;height:6px;border-radius:50%;background:#74d99a}
 .menu-icon{font-size:20px;margin-right:5px}.toast{position:fixed;left:50%;bottom:86px;transform:translateX(-50%) translateY(20px);background:#fff;color:#090a0e;padding:11px 15px;border-radius:10px;font-size:13px;font-weight:700;opacity:0;pointer-events:none;transition:opacity .15s;z-index:100}.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 .bookmark{border:0;background:transparent;color:#7e8592;font-size:19px;padding:3px}.bookmark.saved{color:#fff}
-@media(max-width:650px){.moderation-preview{grid-template-columns:1fr}.moderation-preview img{width:100%}.settings-grid{grid-template-columns:1fr}}
 @media(max-width:650px){.featured{grid-template-columns:1fr}.feature{min-height:260px}.mini-feature{min-height:180px}.desktop-search{display:none}.nav{height:62px;padding:0 14px}.logo{font-size:18px}}
 .empty{text-align:center;color:#747b89;padding:60px 0}.footer{border-top:1px solid var(--line);padding:30px 18px;text-align:center;color:#5f6673;margin-top:40px}
 .grid{contain:layout paint}
@@ -51,10 +50,52 @@ body.light{--bg:#f6f7f9;--panel:#fff;--panel2:#eef0f4;--line:#dfe3ea;--muted:#68
 .profile-cover{height:125px;border-radius:18px;background:radial-gradient(circle at 70% 20%,#272c38,#101218 55%,#0a0b0f);border:1px solid var(--line);position:relative;overflow:hidden}.profile-cover:after{content:"SOURCEHUB";position:absolute;right:20px;bottom:8px;font-size:42px;font-weight:900;color:rgba(255,255,255,.035);letter-spacing:-3px}.profile-head{margin-top:-30px;position:relative;padding-top:0}
 @media(max-width:700px){.dashboard-strip{grid-template-columns:repeat(2,1fr)}.hero-orbit{right:-100px;top:80px;opacity:.35}.command{display:none}}
 
-/* SourceHub white theme */
-:root{--bg:#f7f8fa;--panel:#ffffff;--panel2:#f0f2f5;--line:#dfe3e8;--muted:#68707c;--white:#111318;--accent:#111318}
-html,body{background:#f7f8fa;color:#111318}body{color:#111318}.header{background:rgba(255,255,255,.94);border-bottom-color:#e2e5e9}.navbtn{color:#68707c}.navbtn:hover,.navbtn.active{background:#eef1f4;color:#111318}.publish-nav,.primary,.chip.active{background:#111318!important;color:#fff!important;border-color:#111318!important}.input,.select,.textarea{background:#fff;color:#111318;border-color:#d8dde3}.btn{background:#f0f2f5;color:#111318;border-color:#d9dee4}.card,.feature,.menu-panel,.notice,.filebox{background:#fff;border-color:#dfe3e8}.tag{color:#4d5561;background:#f0f2f5;border-color:#dce1e6}.cover-placeholder{background:linear-gradient(135deg,#eef1f4,#f8f9fa);color:#9aa2ad}.source p,.description,.hero p{color:#68707c}.muted{color:#68707c}.avatar{background:#111318;color:#fff}.bookmark{color:#6f7783}.bookmark.saved{color:#111318}.menu-overlay{background:rgba(20,24,30,.28)}.menu-item{color:#4f5762}.menu-item:hover,.menu-item.active{background:#eef1f4;color:#111318}.menu-item.publish-nav{background:#111318!important;color:#fff!important}.menu-item.publish-nav span{color:#fff}.toast{background:#111318;color:#fff}.profile-cover{background:#fff!important}.kbd{background:#eef1f4!important;color:#555!important;border-color:#dfe3e8!important}.hero-kicker,.hero-orbit{color:#6d7480}.feature-gradient{background:linear-gradient(90deg,rgba(255,255,255,.98),rgba(255,255,255,.72),rgba(255,255,255,.05))}.feature-content p{color:#68707c}.mini-number{color:#d2d7dd}.source-badge{color:#68707c}.footer{color:#8a919b!important}
-.badge{display:inline-flex;align-items:center;justify-content:center;width:18px;height:18px;font-size:12px;font-weight:900;vertical-align:middle;margin-left:4px;border-radius:50%}.badge.gold{color:#d59a00;background:#fff4c7;border:1px solid #e3bd52}.badge.white{color:#fff;background:transparent;border:0;text-shadow:0 0 3px #777}.light .badge.white{color:#111318;text-shadow:none}.author-line{display:inline-flex;align-items:center;gap:2px}.admin-panel{margin:25px 0}.admin-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}.admin-list{display:grid;gap:10px}.admin-item{border:1px solid #dfe3e8;border-radius:14px;padding:14px;background:#fff}.admin-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}.moderation-preview{display:grid;grid-template-columns:180px 1fr;gap:16px;align-items:start}.moderation-preview img{width:180px;aspect-ratio:16/9;object-fit:cover;border-radius:12px;border:1px solid var(--line);background:var(--panel2)}.moderation-meta{display:grid;gap:7px;font-size:13px}.moderation-meta b{color:var(--muted);font-weight:600}.settings-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.theme-option{padding:18px;border:1px solid var(--line);border-radius:14px;background:var(--panel2);color:var(--muted);text-align:left}.theme-option.active{border-color:currentColor;color:var(--text,#fff)}.theme-swatch{height:54px;border-radius:10px;margin-bottom:10px;border:1px solid var(--line)}.theme-swatch.dark{background:#08090d}.theme-swatch.light{background:#f6f7f9}.moderation-preview .description{margin-top:12px}.status-pending{color:#a36b00}.status-rejected{color:#b42318}.avatar-img{width:76px;height:76px;border-radius:50%;object-fit:cover}.profile-avatar-wrap{position:relative}.avatar-upload{position:absolute;right:-4px;bottom:-4px;width:28px;height:28px;border-radius:50%;border:1px solid #dfe3e8;background:#111318;color:#fff;display:grid;place-items:center;cursor:pointer;font-size:14px}.pending-note{font-size:12px;color:#a36b00;margin-top:8px}
+/* SourceHub theme system: dark is the default; light overrides are scoped to body.light only. */
+:root{--bg:#08090d;--panel:#101218;--panel2:#171a22;--line:#272a34;--muted:#9298a5;--white:#fff;--accent:#fff}
+html,body{background:var(--bg);color:#f5f5f7}
+body.light{--bg:#f7f8fa;--panel:#ffffff;--panel2:#f0f2f5;--line:#dfe3e8;--muted:#68707c;--white:#111318;--accent:#111318;color:#111318}
+body.light .header{background:rgba(255,255,255,.94);border-bottom-color:#e2e5e9}
+body.light .navbtn{color:#68707c}
+body.light .navbtn:hover,body.light .navbtn.active{background:#eef1f4;color:#111318}
+body.light .publish-nav,body.light .primary,body.light .chip.active{background:#111318!important;color:#fff!important;border-color:#111318!important}
+body.light .input,body.light .select,body.light .textarea{background:#fff;color:#111318;border-color:#d8dde3}
+body.light .btn{background:#f0f2f5;color:#111318;border-color:#d9dee4}
+body.light .card,body.light .feature,body.light .menu-panel,body.light .notice,body.light .filebox,body.light .activity,body.light .quick-card,body.light .search-box,body.light .modalbox,body.light .dash,body.light .admin-item{background:#fff;border-color:#dfe3e8}
+body.light .tag{color:#4d5561;background:#f0f2f5;border-color:#dce1e6}
+body.light .cover-placeholder{background:linear-gradient(135deg,#eef1f4,#f8f9fa);color:#9aa2ad}
+body.light .source p,body.light .description,body.light .hero p,body.light .feature-content p{color:#68707c}
+body.light .muted,body.light .source-badge{color:#68707c}
+body.light .avatar{background:#111318;color:#fff}
+body.light .bookmark{color:#6f7783}
+body.light .bookmark.saved{color:#111318}
+body.light .menu-overlay{background:rgba(20,24,30,.28)}
+body.light .menu-item{color:#4f5762}
+body.light .menu-item:hover,body.light .menu-item.active{background:#eef1f4;color:#111318}
+body.light .menu-item.publish-nav{background:#111318!important;color:#fff!important}
+body.light .menu-item.publish-nav span{color:#fff}
+body.light .toast{background:#111318;color:#fff}
+body.light .profile-cover{background:#fff!important}
+body.light .kbd{background:#eef1f4!important;color:#555!important;border-color:#dfe3e8!important}
+body.light .hero-kicker,body.light .hero-orbit{color:#6d7480}
+body.light .feature-gradient{background:linear-gradient(90deg,rgba(255,255,255,.98),rgba(255,255,255,.72),rgba(255,255,255,.05))}
+body.light .mini-number{color:#d2d7dd}
+body.light .footer{color:#8a919b!important}
+body.light .activity-row{border-top-color:#dfe3e8}
+body.light .activity-icon{background:#eef1f4;color:#111318}
+body.light .search-result{border-bottom-color:#dfe3e8}
+body.light .search-result:hover{background:#eef1f4}
+body.light .empty-hero{border-color:#cfd5dd;background:radial-gradient(circle at 50% 0,#f1f3f6 0,#f8f9fa 48%,#fff 100%)}
+body.light .empty-icon{border-color:#d5dae1}
+body.light .profile-cover:after{color:rgba(17,19,24,.035)}
+body.light .avatar-upload{border-color:#dfe3e8;background:#111318;color:#fff}
+body.light .status-pending{color:#a36b00}
+body.light .status-rejected{color:#b42318}
+body.light .pending-note{color:#a36b00}
+body.light .form label{color:#68707c}
+body.light .close{color:#68707c}
+body.light .command{background:#fff;color:#68707c}
+body.light .dashboard-strip .dash span{color:#717886}
+.badge{display:inline-flex;align-items:center;justify-content:center;width:18px;height:18px;font-size:12px;font-weight:900;vertical-align:middle;margin-left:4px;border-radius:50%}.badge.gold{color:#d59a00;background:#fff4c7;border:1px solid #e3bd52}.badge.white{color:#fff;background:#111318;border:1px solid #111318}.author-line{display:inline-flex;align-items:center;gap:2px}.admin-panel{margin:25px 0}.admin-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}.admin-list{display:grid;gap:10px}.admin-item{border:1px solid #dfe3e8;border-radius:14px;padding:14px;background:#fff}.admin-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}.status-pending{color:#a36b00}.status-rejected{color:#b42318}.avatar-img{width:76px;height:76px;border-radius:50%;object-fit:cover}.profile-avatar-wrap{position:relative}.avatar-upload{position:absolute;right:-4px;bottom:-4px;width:28px;height:28px;border-radius:50%;border:1px solid #dfe3e8;background:#111318;color:#fff;display:grid;place-items:center;cursor:pointer;font-size:14px}.pending-note{font-size:12px;color:#a36b00;margin-top:8px}
 @media(max-width:650px){.admin-grid{grid-template-columns:1fr}}
 </style>
 </head>
@@ -72,7 +113,6 @@ html,body{background:#f7f8fa;color:#111318}body{color:#111318}.header{background
 <button class="menu-item" data-page="profile" onclick="go('profile');closeMenu()"><span>◉</span>Мой профиль</button>
 <button class="menu-item publish-nav" data-page="publish" onclick="go('publish');closeMenu()"><span>＋</span>Опубликовать сорс</button>
 <button class="menu-item" type="button" onclick="closeMenu();openCommand()"><span>⌕</span>Поиск</button>
-<button class="menu-item" type="button" onclick="closeMenu();openSettings()"><span>⚙</span>Настройки</button>
 <div class="menu-divider"></div>
 <button class="menu-item menu-auth" id="menuAuthButton" type="button" onclick="handleMenuAuth()"><span>↪</span>Войти</button>
 </aside></div>
@@ -137,7 +177,7 @@ html,body{background:#f7f8fa;color:#111318}body{color:#111318}.header{background
 <div class="activity-row"><div class="activity-icon">☆</div><span>Сохраняй понравившиеся проекты в избранное.</span></div>
 </div>
 <div class="card admin-panel" id="adminPanel" style="display:none">
-<div class="section-row" style="margin-top:0"><h2 id="moderationTitle">Панель модерации</h2><span id="moderationRole">Доступ по галочке</span></div>
+<div class="section-row" style="margin-top:0"><h2>Панель администратора</h2><span>UID-доступ</span></div>
 <div class="admin-grid">
 <div><h3>Модерация сорсов</h3><div id="moderationList" class="admin-list"><div class="muted">Загрузка…</div></div></div>
 <div><h3>Галочка тестеру</h3><p class="muted" style="font-size:13px">Галочка назначается строго по User ID.</p><input class="input" id="badgeUid" placeholder="User UID">
@@ -192,38 +232,10 @@ html,body{background:#f7f8fa;color:#111318}body{color:#111318}.header{background
 <label>Описание<input class="input" id="editBio" maxlength="120"></label>
 <label>Telegram<input class="input" id="editTelegram" maxlength="100" placeholder="@username"></label>
 <label>Аватар<div class="filebox"><input id="editAvatar" type="file" accept="image/*"></div></label>
-<button class="btn primary" type="submit">Сохранить</button>
+<button class="btn primary" type="submit">Сохранить</button><button class="btn full" id="themeButton" type="button">Белая тема</button>
 </form>
 </div></div>
 
-<div class="modal" id="settingsModal" aria-hidden="true" onclick="if(event.target===this)closeSettings()">
-<div class="modalbox">
-<div class="modalhead"><h2>Настройки</h2><button class="close" type="button" onclick="closeSettings()">×</button></div>
-<div class="form">
-<div><b>Тема сайта</b><p class="muted" style="font-size:13px;margin:7px 0 12px">Выбери оформление SourceHub. Настройка сохраняется на этом устройстве.</p></div>
-<div class="settings-grid">
-<button class="theme-option" id="themeDarkOption" type="button" onclick="setTheme(false);updateThemeOptions()"><div class="theme-swatch dark"></div><b>Чёрная</b><div class="muted">Тёмная тема</div></button>
-<button class="theme-option" id="themeLightOption" type="button" onclick="setTheme(true);updateThemeOptions()"><div class="theme-swatch light"></div><b>Белая</b><div class="muted">Светлая тема</div></button>
-</div>
-</div></div></div>
-
-<div class="modal" id="moderationPreviewModal" aria-hidden="true" onclick="if(event.target===this)closeModerationPreview()">
-<div class="modalbox">
-<div class="modalhead"><h2 id="moderationPreviewTitle">Просмотр сорса</h2><button class="close" type="button" onclick="closeModerationPreview()">×</button></div>
-<div id="moderationPreviewBody"></div>
-</div></div>
-
-<div class="modal" id="aboutModal" aria-hidden="true">
-<div class="modalbox">
-<div class="modalhead"><h2>Как работает SourceHub</h2><button class="close" type="button" onclick="closeAbout()">×</button></div>
-<div class="form">
-<div class="notice">Регистрация и вход выполняются через Telegram-бота.</div>
-<div class="activity-row"><div class="activity-icon">01</div><span>Открой бота <b>@sourcereg_bot</b> и нажми Start.</span></div>
-<div class="activity-row"><div class="activity-icon">02</div><span>Бот выдаст постоянный 6-значный код, привязанный к твоему Telegram.</span></div>
-<div class="activity-row"><div class="activity-icon">03</div><span>Для нового аккаунта выбери регистрацию и укажи уникальный ник.</span></div>
-<div class="activity-row"><div class="activity-icon">04</div><span>После входа можно публиковать ZIP-исходники, ставить лайки и сохранять проекты.</span></div>
-<button class="btn primary full" type="button" onclick="closeAbout();openAuth('login')">Войти через Telegram</button>
-</div></div></div>
 <div class="toast" id="toast"></div>
 <div class="modal" id="authModal">
 <div class="modalbox">
@@ -248,14 +260,13 @@ html,body{background:#f7f8fa;color:#111318}body{color:#111318}.header{background
 const TELEGRAM_AUTH_CONFIG={botUsername:'sourcereg_bot',apiBase:''};
 // Same-origin API: works on localhost and through the public HTTPS tunnel.
 // This avoids mixed-content/CORS failures caused by calling http://127.0.0.1 from Netlify/HTTPS.
-const API='https://source-hub.onrender.com';
+const API='https://python3-server-py.onrender.com';
 let sources=[];
-let profile={name:'Гость',bio:'Войди или зарегистрируйся',telegram:'',id:null,avatar:'',badge:''};
+let profile={name:'Гость',bio:'Войди или зарегистрируйся',telegram:'',id:null,avatar:'',badge:''};isAdmin=false;
 let savedIds=JSON.parse(localStorage.getItem('sourcehub_saved_v4')||'[]');
 let currentUser=null;
 let botUsername=TELEGRAM_AUTH_CONFIG.botUsername;
 let isAdmin=false;
-let isModerator=false;
 
 const RATE_LIMITS={publish:30000,like:2000,download:3000,auth:5000};
 const rateState=Object.create(null);
@@ -303,21 +314,21 @@ function setAuthVerificationMode(){
 function openAuth(mode='login'){$('authMode').value=mode;$('authUsername').value='';$('authOtp').value='';$('authMsg').className='error';$('authMsg').textContent='Открой Telegram-бота, нажми Start и введи свой постоянный 6-значный код.';setAuthVerificationMode();$('authModal').classList.add('show')}
 function closeAuth(){$('authModal')?.classList.remove('show')}
 function switchAuth(){openAuth($('authMode').value==='register'?'login':'register')}
-async function loadProfile(){if(!currentUser)return null;try{const d=await api('/api/profile/me');profile={name:d.username,bio:d.bio,telegram:d.telegram,id:d.id,avatar:d.avatar?new URL(d.avatar,API).href:'',badge:d.badge||''};isAdmin=!!d.admin;isModerator=!!d.moderator;return d}catch(e){localStorage.removeItem('sourcehub_session');currentUser=null;profile={name:'Гость',bio:'Войди или зарегистрируйся',telegram:'',id:null,avatar:'',badge:''};isAdmin=false;return null}}
+async function loadProfile(){if(!currentUser)return null;try{const d=await api('/api/profile/me');profile={name:d.username,bio:d.bio,telegram:d.telegram,id:d.id,avatar:d.avatar?new URL(d.avatar,API).href:'',badge:d.badge||''};isAdmin=!!d.admin;return d}catch(e){localStorage.removeItem('sourcehub_session');currentUser=null;profile={name:'Гость',bio:'Войди или зарегистрируйся',telegram:'',id:null,avatar:'',badge:''};isAdmin=false;return null}}
 async function loadSources(){try{sources=await api('/api/sources');sources=sources.map(s=>({...s,image:s.image?new URL(s.image,API).href:'',zipUrl:s.zipUrl?new URL(s.zipUrl,API).href:''}))}catch(e){console.error(e);toast('Не удалось загрузить каталог')}}
 async function loadInitial(){
  try{const cfg=await api('/api/config');botUsername=cfg.botUsername||TELEGRAM_AUTH_CONFIG.botUsername}catch(e){botUsername=TELEGRAM_AUTH_CONFIG.botUsername}
  const saved=token();
- if(saved){try{const d=await api('/api/profile/me');currentUser={id:d.id,username:d.username};profile={name:d.username,bio:d.bio,telegram:d.telegram,id:d.id,avatar:d.avatar?new URL(d.avatar,API).href:'',badge:d.badge||''};isAdmin=!!d.admin;isModerator=!!d.moderator}catch(e){localStorage.removeItem('sourcehub_session');currentUser=null}}
- if(!currentUser){profile={name:'Гость',bio:'Войди или зарегистрируйся',telegram:'',id:null,avatar:'',badge:''};isAdmin=false;isModerator=false}
- setAuthVerificationMode();await loadSources();setAuthButton();renderAll();if(isModerator)loadModeration();
+ if(saved){try{const d=await api('/api/profile/me');currentUser={id:d.id,username:d.username};profile={name:d.username,bio:d.bio,telegram:d.telegram,id:d.id,avatar:d.avatar?new URL(d.avatar,API).href:'',badge:d.badge||''};isAdmin=!!d.admin}catch(e){localStorage.removeItem('sourcehub_session');currentUser=null}}
+ if(!currentUser){profile={name:'Гость',bio:'Войди или зарегистрируйся',telegram:'',id:null,avatar:'',badge:''};isAdmin=false}
+ setAuthVerificationMode();await loadSources();setAuthButton();renderAll();if(isAdmin)loadModeration();
 }
-async function signOut(){try{await api('/api/auth/logout',{method:'POST'})}catch(e){}localStorage.removeItem('sourcehub_session');currentUser=null;profile={name:'Гость',bio:'Войди или зарегистрируйся',telegram:'',id:null,avatar:'',badge:''};isAdmin=false;isModerator=false;setAuthButton();renderAll();toast('Вы вышли из аккаунта')}
+async function signOut(){try{await api('/api/auth/logout',{method:'POST'})}catch(e){}localStorage.removeItem('sourcehub_session');currentUser=null;profile={name:'Гость',bio:'Войди или зарегистрируйся',telegram:'',id:null,avatar:'',badge:''};isAdmin=false;setAuthButton();renderAll();toast('Вы вышли из аккаунта')}
 function updateDashboard(){setText('dashSources',sources.length);setText('dashAuthors',new Set(sources.map(s=>s.userId||s.author)).size);setText('dashSaved',savedIds.length)}
 function card(s){return `<article class="card source">${s.image?`<img class="cover" src="${esc(s.image)}" alt="" loading="lazy" decoding="async">`:'<div class="cover-placeholder">⌁</div>'}<div class="top"><span class="tag">${esc(s.game)}</span><button class="bookmark ${isSaved(s.id)?'saved':''}" onclick="event.stopPropagation();toggleSave('${esc(s.id)}')">${isSaved(s.id)?'★':'☆'}</button></div><h3>${esc(s.title)}</h3><p>${esc(s.description||'Без описания')}</p><div class="meta"><span class="author-line">by @${esc(s.author)}${s.authorBadge?`<span class="badge ${s.authorBadge}" title="Проверенный тестер">✓</span>`:''}</span><span>♥ ${Number(s.likes)||0}</span><span>↓ ${Number(s.downloads)||0}</span></div><button class="btn primary full" onclick="go('source','${esc(s.id)}')">Открыть</button></article>`}
 function renderFeatured(){const box=$('featured');if(!box)return;const arr=[...sources].sort((a,b)=>(b.downloads||0)-(a.downloads||0));const main=arr[0],second=arr[1];if(!main){box.innerHTML=`<article class="feature"><div class="feature-content"><span class="tag">SOURCEHUB</span><h2>Каталог ждёт первый проект</h2><p>Здесь будут выделяться самые интересные публикации сообщества.</p><button class="btn primary" onclick="go('publish')">Создать первый сорс →</button></div></article><article class="feature mini-feature"><div><div class="mini-number">00</div><span class="source-badge"><span class="dot"></span> Пустой каталог</span></div><div><h3>Будь первым</h3><p>Опубликуй исходник и создай первую карточку.</p></div></article>`;return}box.innerHTML=`<article class="feature">${main.image?`<img src="${esc(main.image)}" alt="" loading="lazy" decoding="async">`:''}<div class="feature-gradient"></div><div class="feature-content"><span class="tag">Популярный сорс</span><h2>${esc(main.title)}</h2><p>${esc(main.description||'Популярная публикация сообщества.')}</p><button class="btn primary" onclick="go('source','${esc(main.id)}')">Открыть сорс →</button></div></article><article class="feature mini-feature"><div><div class="mini-number">#01</div><span class="source-badge"><span class="dot"></span> Сейчас в тренде</span></div><div><h3>${esc(second?.title||'Твоя публикация')}</h3><p>${esc(second?.author||'Стань первым автором.')}</p><button class="btn" onclick="${second?`go('source','${esc(second.id)}')`:`go('publish')`}">${second?'Посмотреть':'Опубликовать'}</button></div></article>`}
 function renderFeed(){renderFeatured();updateDashboard();const search=($('search')?.value||'').toLowerCase().trim(),filter=$('filter')?.value||'',sort=$('sort')?.value||'new';let arr=sources.filter(s=>{const text=`${s.title} ${s.description} ${s.author} ${s.game}`.toLowerCase();return(!filter||s.game===filter)&&(!search||text.includes(search))});if(sort==='downloads')arr.sort((a,b)=>(b.downloads||0)-(a.downloads||0));else if(sort==='likes')arr.sort((a,b)=>(b.likes||0)-(a.likes||0));else arr.sort((a,b)=>(b.created||0)-(a.created||0));setText('resultCount',`${arr.length} проектов`);if($('feed'))$('feed').innerHTML=arr.length?arr.map(card).join(''):`<div class="empty-hero" style="grid-column:1/-1"><div class="empty-icon">⌁</div><h2>${search?'Ничего не найдено':'Лента пока пустая'}</h2><p>${search?'Попробуй изменить запрос.':'Здесь появятся исходники сообщества.'}</p><button class="btn primary" onclick="go('publish')">${currentUser?'Опубликовать сорс':'Войти и опубликовать'}</button></div>`}
-function renderProfile(){if(!$('profileName'))return;$('profileName').innerHTML=esc(profile.name||'Гость')+(profile.badge?` <span class="badge ${esc(profile.badge)}" title="${profile.badge==='gold'?'Золотая галочка':'Белая галочка'}">✓</span>`:'');setText('profileBio',profile.bio);if($('avatar'))$('avatar').outerHTML=profile.avatar?`<img class="avatar-img" id="avatar" src="${esc(profile.avatar)}" alt="">`:`<div class="avatar" id="avatar">${esc((profile.name?.[0]||'G').toUpperCase())}</div>`;setText('profileUserId',profile.id||'Войдите, чтобы получить User ID');if($('adminPanel'))$('adminPanel').style.display=isModerator?'block':'none';if($('badgeManager'))$('badgeManager').style.display=isAdmin?'block':'none';if($('moderationTitle'))$('moderationTitle').textContent=isAdmin?'Панель администратора':'Панель модератора';if($('moderationRole'))$('moderationRole').textContent=isAdmin?'UID-доступ':'Доступ по галочке';const mine=currentUser?sources.filter(s=>s.userId===currentUser.id):[];setText('statPosts',mine.length);setText('statDownloads',mine.reduce((sum,s)=>sum+(s.downloads||0),0));if($('mySources'))$('mySources').innerHTML=currentUser?(mine.length?mine.map(card).join(''):`<div class="empty-hero" style="grid-column:1/-1"><div class="empty-icon">＋</div><h2>Публикаций нет</h2><p>Опубликуй первый исходник.</p><button class="btn primary" onclick="go('publish')">Создать публикацию</button></div>`):`<div class="empty-hero" style="grid-column:1/-1"><div class="empty-icon">◉</div><h2>Профиль ещё не подключён</h2><p>Регистрация создаёт постоянный аккаунт и уникальный User ID.</p><button class="btn primary" onclick="openAuth('register')">Создать аккаунт</button></div>`;const saved=sources.filter(s=>isSaved(s.id));if($('savedSources'))$('savedSources').innerHTML=saved.length?saved.map(card).join(''):'<div class="empty">Сохранённых сорсов пока нет.</div>'}
+function renderProfile(){if(!$('profileName'))return;setText('profileName',profile.name);setText('profileBio',profile.bio);if($('avatar'))$('avatar').outerHTML=profile.avatar?`<img class="avatar-img" id="avatar" src="${esc(profile.avatar)}" alt="">`:`<div class="avatar" id="avatar">${esc((profile.name?.[0]||'G').toUpperCase())}</div>`;setText('profileUserId',profile.id||'Войдите, чтобы получить User ID');if($('adminPanel'))$('adminPanel').style.display=isAdmin?'block':'none';const mine=currentUser?sources.filter(s=>s.userId===currentUser.id):[];setText('statPosts',mine.length);setText('statDownloads',mine.reduce((sum,s)=>sum+(s.downloads||0),0));if($('mySources'))$('mySources').innerHTML=currentUser?(mine.length?mine.map(card).join(''):`<div class="empty-hero" style="grid-column:1/-1"><div class="empty-icon">＋</div><h2>Публикаций нет</h2><p>Опубликуй первый исходник.</p><button class="btn primary" onclick="go('publish')">Создать публикацию</button></div>`):`<div class="empty-hero" style="grid-column:1/-1"><div class="empty-icon">◉</div><h2>Профиль ещё не подключён</h2><p>Регистрация создаёт постоянный аккаунт и уникальный User ID.</p><button class="btn primary" onclick="openAuth('register')">Создать аккаунт</button></div>`;const saved=sources.filter(s=>isSaved(s.id));if($('savedSources'))$('savedSources').innerHTML=saved.length?saved.map(card).join(''):'<div class="empty">Сохранённых сорсов пока нет.</div>'}
 function renderDetail(id){const s=sources.find(x=>String(x.id)===String(id));if(!s){$('sourceContent').innerHTML='<div class="empty">Сорс не найден.</div>';return}$('sourceContent').innerHTML=`${s.image?`<img class="detail-cover" src="${esc(s.image)}" alt="" decoding="async">`:''}<div class="detail-info"><span class="tag">${esc(s.game)}</span><span class="tag">v${esc(s.version)}</span><span class="muted">Автор: ${esc(s.author)}${s.authorBadge?` <span class=\"badge ${esc(s.authorBadge)}\">✓</span>`:''}</span></div><h1>${esc(s.title)}</h1>${s.status&&s.status!=='approved'?`<div class="pending-note">Статус: ${s.status==='pending'?'На модерации':'Отклонён'}</div>`:''}<div class="meta"><span>♥ ${s.likes||0}</span><span>↓ ${s.downloads||0} скачиваний</span><span>${size(s.size)}</span></div><div class="description">${esc(s.description||'Описание отсутствует.')}</div><div class="detail-actions"><button class="btn primary" onclick="downloadSource('${esc(s.id)}')">↓ Скачать ZIP</button><button class="btn" onclick="like('${esc(s.id)}')">♥ Нравится</button><button class="btn" onclick="toggleSave('${esc(s.id)}')">${isSaved(s.id)?'★ Сохранено':'☆ Сохранить'}</button>${currentUser&&s.userId===currentUser.id?`<button class="btn" onclick="deleteSource('${esc(s.id)}')">Удалить</button>`:''}</div>`}
 async function like(id){if(!currentUser){openAuth('login');return}if(!rateOk('like'))return;try{const d=await api(`/api/sources/${encodeURIComponent(id)}/like`,{method:'POST'});const s=sources.find(x=>String(x.id)===String(id));if(s)s.likes=Math.max(0,(s.likes||0)+(d.liked?1:-1));renderDetail(id);renderFeed();toast(d.liked?'Лайк поставлен':'Лайк убран')}catch(e){toast(e.message)}}
 function downloadSource(id){const s=sources.find(x=>String(x.id)===String(id));if(!s||!rateOk('download'))return;s.downloads=(s.downloads||0)+1;renderDetail(id);renderFeed();const a=document.createElement('a');a.href=s.zipUrl;a.download=s.fileName||'source.zip';document.body.appendChild(a);a.click();a.remove();toast('Скачивание началось')}
@@ -326,51 +337,47 @@ function setFilter(value){if($('filter'))$('filter').value=value;document.queryS
 function openCommand(){$('commandModal')?.classList.add('show');if($('commandInput')){$('commandInput').value='';commandSearch();setTimeout(()=>$('commandInput').focus(),50)}}
 function closeCommand(){$('commandModal')?.classList.remove('show')}
 function commandSearch(){const q=($('commandInput')?.value||'').toLowerCase().trim();const arr=sources.filter(s=>!q||`${s.title} ${s.game} ${s.author}`.toLowerCase().includes(q)).slice(0,12);if($('commandResults'))$('commandResults').innerHTML=arr.length?arr.map(s=>`<div class="search-result" onclick="closeCommand();go('source','${esc(s.id)}')"><span><b>${esc(s.title)}</b><br><small>${esc(s.game)} · ${esc(s.author)}</small></span><span>→</span></div>`).join(''):'<div class="empty">Ничего не найдено</div>'}
-function showAbout(){$('aboutModal')?.classList.add('show');$('aboutModal')?.setAttribute('aria-hidden','false')} function closeAbout(){$('aboutModal')?.classList.remove('show');$('aboutModal')?.setAttribute('aria-hidden','true')}
+function showAbout(){
+ let m=document.getElementById('aboutModal');
+ if(!m){
+  m=document.createElement('div');m.id='aboutModal';m.className='modal show';
+  m.innerHTML=`<div class="modalbox" role="dialog" aria-modal="true" aria-labelledby="aboutTitle">
+   <div class="modalhead"><strong id="aboutTitle">Как это работает</strong><button class="close" type="button" aria-label="Закрыть" onclick="document.getElementById('aboutModal')?.remove()">×</button></div>
+   <div style="padding:16px 0 4px;line-height:1.7;color:var(--muted)">
+    <p><b style="color:var(--white)">1. Регистрация</b><br>Открой Telegram-бота SourceHub и нажми Start. Бот выдаст твой 6-значный код.</p>
+    <p><b style="color:var(--white)">2. Аккаунт</b><br>Введи код на сайте. Telegram-аккаунт привязывается к одному User ID.</p>
+    <p><b style="color:var(--white)">3. Публикация</b><br>После входа можно загрузить ZIP с исходником и описание проекта.</p>
+    <p><b style="color:var(--white)">4. Модерация</b><br>Публикации обычных пользователей проходят проверку перед появлением в общей ленте.</p>
+   </div>
+   <button class="btn primary full" type="button" onclick="document.getElementById('aboutModal')?.remove()">Понятно</button>
+  </div>`;
+  m.addEventListener('click',e=>{if(e.target===m)m.remove()});document.body.appendChild(m);
+ }
+}
 function editProfile(){if(!currentUser){openAuth('login');return}$('editName').value=profile.name;$('editBio').value=profile.bio;$('editTelegram').value=profile.telegram||'';$('editAvatar').value='';$('profileModal').classList.add('show')}
 function closeProfile(){$('profileModal').classList.remove('show')}
 async function deleteSource(id){if(!currentUser)return;const s=sources.find(x=>String(x.id)===String(id));if(!s||s.userId!==currentUser.id)return;if(!confirm('Удалить публикацию?'))return;try{await api(`/api/sources/${encodeURIComponent(id)}`,{method:'DELETE'});await loadSources();renderAll();go('home');toast('Публикация удалена')}catch(e){toast(e.message)}}
 async function publishSource(e){e.preventDefault();const msg=$('publishMsg');msg.className='error';msg.textContent='';if(!rateOk('publish'))return;if(!currentUser){openAuth('login');msg.textContent='Сначала войди в аккаунт.';return}const zip=$('pZip').files[0],image=$('pImage').files[0];if(!zip||!zip.name.toLowerCase().endsWith('.zip')){msg.textContent='Выбери ZIP-файл.';return}if(zip.size>100*1024*1024){msg.textContent='ZIP должен быть не больше 100 MB.';return}try{msg.className='success';msg.textContent='Загрузка ZIP…';const fd=new FormData();fd.append('title',$('pTitle').value.trim());fd.append('game',$('pGame').value);fd.append('version',$('pVersion').value.trim()||'1.0.0');fd.append('description',$('pDescription').value.trim());fd.append('zip',zip);if(image)fd.append('image',image);await api('/api/sources',{method:'POST',body:fd});await loadSources();e.target.reset();msg.textContent='Отправлено на модерацию. После одобрения сорс появится в общей ленте.';renderAll();setTimeout(()=>go('home'),500)}catch(err){console.error(err);msg.className='error';msg.textContent=err.message||'Не удалось опубликовать.'}}
-async function saveProfileChanges(e){e.preventDefault();if(!currentUser)return;const username=normalizeNick($('editName').value)||normalizeNick(profile.name),bio=$('editBio').value.trim()||'Автор SourceHub',telegram=$('editTelegram').value.trim();try{const d=await api('/api/profile',{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify({username,bio,telegram})});profile={...profile,name:d.username,bio:d.bio,telegram:d.telegram,id:d.id||profile.id};const avatar=$('editAvatar')?.files?.[0];if(avatar&&!(await uploadAvatarFile(avatar)))return;closeProfile();setAuthButton();renderAll();toast('Профиль сохранён')}catch(err){toast(err.message)}}
-async function authSubmit(e){e.preventDefault();const mode=$('authMode').value,username=normalizeNick($('authUsername').value),code=$('authOtp').value.trim(),msg=$('authMsg');msg.className='error';msg.textContent='';if(!/^\d{6}$/.test(code)){msg.textContent='Введи ровно 6 цифр из Telegram.';return}if(mode==='register'&&!/^[A-Za-zА-Яа-яЁё0-9_ -]{3,30}$/.test(username)){msg.textContent='Ник: 3–30 знаков. Можно использовать русские/латинские буквы, цифры, пробел, _ и -.';return}if(!rateOk('auth'))return;const submit=$('authSubmit');submit.disabled=true;submit.textContent='Проверяем код…';try{const data=await api('/api/auth/verify',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({code,username:username||null,mode})});localStorage.setItem('sourcehub_session',data.token);currentUser=data.user;await loadProfile();closeAuth();toast(mode==='register'?'Аккаунт создан. User ID выдан.':'Вход выполнен');await loadSources();renderAll();if(isModerator)await loadModeration()}catch(err){msg.textContent=err.message||'Ошибка авторизации'}finally{submit.disabled=false;setAuthVerificationMode()}}
-async function uploadAvatarFile(f){
- if(!f||!currentUser)return false;
- if(f.size>10*1024*1024){toast('Аватар должен быть не больше 10 MB');return false}
- try{const fd=new FormData();fd.append('avatar',f);const d=await api('/api/profile/avatar',{method:'POST',body:fd});profile.avatar=d.avatar?new URL(d.avatar,API).href:'';return true}catch(e){toast(e.message);return false}
-}
+async function saveProfileChanges(e){e.preventDefault();if(!currentUser)return;const username=normalizeNick($('editName').value)||normalizeNick(profile.name),bio=$('editBio').value.trim()||'Автор SourceHub',telegram=$('editTelegram').value.trim();try{const d=await api('/api/profile',{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify({username,bio,telegram})});profile={...profile,name:d.username,bio:d.bio,telegram:d.telegram,id:d.id||profile.id};closeProfile();setAuthButton();renderAll();toast('Профиль сохранён')}catch(err){toast(err.message)}}
+async function authSubmit(e){e.preventDefault();const mode=$('authMode').value,username=normalizeNick($('authUsername').value),code=$('authOtp').value.trim(),msg=$('authMsg');msg.className='error';msg.textContent='';if(!/^\d{6}$/.test(code)){msg.textContent='Введи ровно 6 цифр из Telegram.';return}if(mode==='register'&&!/^[A-Za-zА-Яа-яЁё0-9_ -]{3,30}$/.test(username)){msg.textContent='Ник: 3–30 знаков. Можно использовать русские/латинские буквы, цифры, пробел, _ и -.';return}if(!rateOk('auth'))return;const submit=$('authSubmit');submit.disabled=true;submit.textContent='Проверяем код…';try{const data=await api('/api/auth/verify',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({code,username:username||null,mode})});localStorage.setItem('sourcehub_session',data.token);currentUser=data.user;await loadProfile();closeAuth();toast(mode==='register'?'Аккаунт создан. User ID выдан.':'Вход выполнен');await loadSources();renderAll()}catch(err){msg.textContent=err.message||'Ошибка авторизации'}finally{submit.disabled=false;setAuthVerificationMode()}}
 async function uploadAvatar(){
  const f=$('avatarInput')?.files?.[0]; if(!f||!currentUser)return;
- if(await uploadAvatarFile(f)){renderProfile();toast('Аватар обновлён')}
-}
+ try{const fd=new FormData();fd.append('avatar',f);const d=await api('/api/profile/avatar',{method:'POST',body:fd});profile.avatar=d.avatar?new URL(d.avatar,API).href:'';renderProfile();toast('Аватар обновлён')}catch(e){toast(e.message)}}
 async function loadModeration(){
- if(!isModerator||!$('moderationList'))return;
- try{
-  const rows=await api('/api/admin/moderation');window.__moderationRows=rows;
-  $('moderationList').innerHTML=rows.length?rows.map(s=>`<div class="admin-item"><b>${esc(s.title)}</b><div class="muted">${esc(s.author)} · ${esc(s.game)} · ${esc(s.version||'')}</div><div class="admin-actions"><button class="btn" onclick="openModerationPreview('${esc(s.id)}')">Посмотреть</button><button class="btn primary" onclick="moderateSource('${esc(s.id)}','approved')">Одобрить</button><button class="btn" onclick="moderateSource('${esc(s.id)}','rejected')">Отклонить</button></div></div>`).join(''):'<div class="muted">Очередь пуста.</div>'
- }catch(e){$('moderationList').innerHTML=`<div class="error">${esc(e.message)}</div>`}
-}
-function openModerationPreview(id){
- const s=window.__moderationRows?.find(x=>String(x.id)===String(id));
- if(!s)return;
- $('moderationPreviewTitle').textContent=s.title||'Просмотр сорса';
- $('moderationPreviewBody').innerHTML=`<div class="moderation-preview">${s.image?`<img src="${esc(s.image)}" alt="Обложка">`:'<div class="cover-placeholder">Нет обложки</div>'}<div class="moderation-meta"><div><b>Автор</b><br>${esc(s.author||'—')}</div><div><b>Игра</b><br>${esc(s.game||'—')} · v${esc(s.version||'—')}</div><div><b>Файл</b><br>${esc(s.fileName||'source.zip')} · ${size(s.size)}</div><div><b>Описание</b><div class="description">${esc(s.description||'Описание отсутствует.')}</div></div><div class="admin-actions"><a class="btn" href="${esc(API+'/api/admin/sources/'+encodeURIComponent(s.id)+'/download')}" target="_blank" rel="noopener">Скачать ZIP для проверки</a><button class="btn primary" onclick="closeModerationPreview();moderateSource('${esc(s.id)}','approved')">Одобрить</button><button class="btn" onclick="closeModerationPreview();moderateSource('${esc(s.id)}','rejected')">Отклонить</button></div></div></div>`;
- $('moderationPreviewModal').classList.add('show');$('moderationPreviewModal').setAttribute('aria-hidden','false')
-}
-function closeModerationPreview(){$('moderationPreviewModal')?.classList.remove('show');$('moderationPreviewModal')?.setAttribute('aria-hidden','true')}
-
+ if(!isAdmin||!$('moderationList'))return; try{const rows=await api('/api/admin/moderation');$('moderationList').innerHTML=rows.length?rows.map(s=>`<div class="admin-item"><b>${esc(s.title)}</b><div class="muted">${esc(s.author)} · ${esc(s.game)}</div><div class="admin-actions"><button class="btn primary" onclick="moderateSource('${esc(s.id)}','approved')">Одобрить</button><button class="btn" onclick="moderateSource('${esc(s.id)}','rejected')">Отклонить</button></div></div>`).join(''):'<div class="muted">Очередь пуста.</div>'}catch(e){$('moderationList').innerHTML=`<div class="error">${esc(e.message)}</div>`}}
 async function moderateSource(id,status){try{await api(`/api/admin/sources/${encodeURIComponent(id)}/moderate`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({status})});await loadModeration();await loadSources();renderAll();toast(status==='approved'?'Сорс одобрен':'Сорс отклонён')}catch(e){toast(e.message)}}
-async function setBadge(badge){const uid=$('badgeUid')?.value.trim();if(!uid){setText('badgeMsg','Укажи User UID');return}try{await api(`/api/admin/users/${encodeURIComponent(uid)}/badge`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({badge})});setText('badgeMsg',badge?`Галочка ${badge==='gold'?'золотая':'белая'} выдана.`:'Галочка снята.');if(currentUser&&String(currentUser.id)===String(uid)){profile.badge=badge}await loadSources();renderAll()}catch(e){setText('badgeMsg',e.message)}}
+async function setBadge(badge){const uid=$('badgeUid')?.value.trim();if(!uid){setText('badgeMsg','Укажи User UID');return}try{await api(`/api/admin/users/${encodeURIComponent(uid)}/badge`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({badge})});setText('badgeMsg',badge?`Галочка ${badge==='gold'?'золотая':'белая'} выдана.`:'Галочка снята.');await loadSources();renderAll()}catch(e){setText('badgeMsg',e.message)}}
 
 function renderAll(){renderFeed();renderProfile();updateDashboard();if($('authState'))$('authState').textContent=currentUser?`User ID: ${currentUser.id}`:'Не авторизован'}
 function go(page,id){if(page==='publish'&&!currentUser){closeMenu();openAuth('login');return}document.querySelectorAll('.page').forEach(x=>x.classList.remove('active'));const el=$(page);if(el)el.classList.add('active');document.querySelectorAll('[data-page]').forEach(x=>x.classList.toggle('active',x.dataset.page===page));if(page==='source')renderDetail(id);closeMenu();window.scrollTo(0,0)}
 
-$('avatarInput')?.addEventListener('change',uploadAvatar);function setTheme(light){document.body.classList.toggle('light',light);localStorage.setItem('sourcehub_theme',light?'light':'dark');updateThemeOptions()}
-function updateThemeOptions(){const light=document.body.classList.contains('light');$('themeLightOption')?.classList.toggle('active',light);$('themeDarkOption')?.classList.toggle('active',!light);document.querySelector('meta[name=theme-color]')?.setAttribute('content',light?'#f6f7f9':'#08090d')}
-function openSettings(){updateThemeOptions();$('settingsModal')?.classList.add('show');$('settingsModal')?.setAttribute('aria-hidden','false')}
-function closeSettings(){$('settingsModal')?.classList.remove('show');$('settingsModal')?.setAttribute('aria-hidden','true')}
+$('avatarInput')?.addEventListener('change',uploadAvatar);function setTheme(light){document.body.classList.toggle('light',light);localStorage.setItem('sourcehub_theme',light?'light':'dark');if($('themeButton'))$('themeButton').textContent=light?'Тёмная тема':'Белая тема'}
 function toggleTheme(){setTheme(!document.body.classList.contains('light'))}
-setTheme(localStorage.getItem('sourcehub_theme')!=='dark');
-$('publishForm')?.addEventListener('submit',publishSource);$('profileForm')?.addEventListener('submit',saveProfileChanges);$('authForm')?.addEventListener('submit',authSubmit);$('authOtp')?.addEventListener('input',e=>{e.target.value=e.target.value.replace(/\D/g,'').slice(0,6)});$('authSwitch')?.addEventListener('click',switchAuth);$('authClose')?.addEventListener('click',closeAuth);document.querySelectorAll('.chip').forEach(chip=>chip.addEventListener('click',()=>setFilter(chip.textContent.trim()==='Все'?'':chip.textContent.trim())));$('search')?.addEventListener('input',renderFeed);$('filter')?.addEventListener('change',renderFeed);$('sort')?.addEventListener('change',renderFeed);document.addEventListener('keydown',e=>{if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='k'){e.preventDefault();openCommand()}if(e.key==='Escape'){closeCommand();closeAuth();closeProfile();closeAbout();closeSettings();closeModerationPreview()}});requestAnimationFrame(loadInitial);
+setTheme(localStorage.getItem('sourcehub_theme')!=='light');
+async function loadModeration(){if(!profile.admin)return;try{const arr=await api('/api/admin/moderation');const box=$('moderationList');if(!box)return;box.innerHTML=arr.length?arr.map(s=>`<div style=\"border-top:1px solid var(--line);padding:12px 0\"><b>${esc(s.title)}</b><div class=\"muted\">${esc(s.author)} · ${esc(s.game)}</div><div style=\"display:flex;gap:8px;margin-top:8px\"><button class=\"btn\" onclick=\"moderate('${esc(s.id)}','approved')\">Одобрить</button><button class=\"btn\" onclick=\"moderate('${esc(s.id)}','rejected')\">Отклонить</button></div></div>`).join(''):'<div class=\"muted\">Новых публикаций на модерации нет.</div>'}catch(e){$('moderationList').innerHTML='<div class=\"error\">'+esc(e.message)+'</div>'}}
+async function moderate(id,status){try{await api('/api/admin/sources/'+id+'/moderate',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({status})});await loadSources();renderFeed();renderProfile();toast(status==='approved'?'Публикация одобрена':'Публикация отклонена')}catch(e){toast(e.message)}}
+async function setBadge(badge){const uid=$('badgeUid').value.trim();if(!uid){toast('Введи UID');return}try{await api('/api/admin/users/'+encodeURIComponent(uid)+'/badge',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({badge})});toast('Галочка обновлена');await loadProfile();renderProfile()}catch(e){toast(e.message)}}
+$('publishForm')?.addEventListener('submit',publishSource);$('profileForm')?.addEventListener('submit',saveProfileChanges);$('authForm')?.addEventListener('submit',authSubmit);$('authOtp')?.addEventListener('input',e=>{e.target.value=e.target.value.replace(/\D/g,'').slice(0,6)});$('authSwitch')?.addEventListener('click',switchAuth);$('authClose')?.addEventListener('click',closeAuth);document.querySelectorAll('.chip').forEach(chip=>chip.addEventListener('click',()=>setFilter(chip.textContent.trim()==='Все'?'':chip.textContent.trim())));$('search')?.addEventListener('input',renderFeed);$('filter')?.addEventListener('change',renderFeed);$('sort')?.addEventListener('change',renderFeed);document.addEventListener('keydown',e=>{if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='k'){e.preventDefault();openCommand()}if(e.key==='Escape'){closeCommand();closeAuth();closeProfile()}});requestAnimationFrame(loadInitial);
 </script>
 
 </body>
